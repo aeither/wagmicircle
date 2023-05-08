@@ -8,6 +8,7 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    NODEREAL_API_KEY: z.string(),
   },
 
   /**
@@ -19,7 +20,7 @@ export const env = createEnv({
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
     NEXT_PUBLIC_PROJECT_ID: z.string(),
     NEXT_PUBLIC_CLIENT_KEY: z.string(),
-    NEXT_PUBLIC_APP_ID: z.string()
+    NEXT_PUBLIC_APP_ID: z.string(),
   },
 
   /**
@@ -28,6 +29,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    NODEREAL_API_KEY: process.env.NODEREAL_API_KEY,
     NEXT_PUBLIC_PROJECT_ID: process.env.NEXT_PUBLIC_PROJECT_ID,
     NEXT_PUBLIC_CLIENT_KEY: process.env.NEXT_PUBLIC_CLIENT_KEY,
     NEXT_PUBLIC_APP_ID: process.env.NEXT_PUBLIC_APP_ID,

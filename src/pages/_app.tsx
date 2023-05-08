@@ -1,9 +1,16 @@
 import { WalletEntryPosition } from "@particle-network/auth";
 import {
+  Avalanche,
   BSC,
   BSCTestnet,
   Ethereum,
   EthereumGoerli,
+  Moonbeam,
+  Moonriver,
+  Optimism,
+  OptimismGoerli,
+  Polygon,
+  PolygonMumbai,
 } from "@particle-network/common";
 import { evmWallets } from "@particle-network/connect";
 import { ModalProvider } from "@particle-network/connect-react-ui";
@@ -31,7 +38,19 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         projectId: env.NEXT_PUBLIC_PROJECT_ID,
         clientKey: env.NEXT_PUBLIC_CLIENT_KEY,
         appId: env.NEXT_PUBLIC_APP_ID,
-        chains: [BSC, BSCTestnet],
+        chains: [
+          BSC,
+          BSCTestnet,
+          Ethereum,
+          EthereumGoerli,
+          OptimismGoerli,
+          PolygonMumbai,
+          Optimism,
+          Moonbeam,
+          Moonriver,
+          Avalanche,
+          Polygon,
+        ],
         particleWalletEntry: {
           displayWalletEntry: true,
           defaultWalletEntryPosition: WalletEntryPosition.BR,
