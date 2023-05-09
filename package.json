@@ -1,5 +1,5 @@
 {
-  "name": "bnbhack",
+  "name": "wagmicircle",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@1inch/fusion-sdk": "^0.1.7",
     "@particle-network/auth": "^0.13.0",
     "@particle-network/connect-react-ui": "^0.13.0",
     "@particle-network/provider": "^0.13.0",
