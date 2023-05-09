@@ -1,4 +1,9 @@
-import { ConnectButton, useAccount } from "@particle-network/connect-react-ui";
+import {
+  ConnectButton,
+  useAccount,
+  useParticleProvider,
+} from "@particle-network/connect-react-ui";
+import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { CharacterResponseData } from "./api/character";
 import { NotesLink, NotesResponseData } from "./api/note";
@@ -37,6 +42,53 @@ export default function Home() {
   const account = useAccount();
   const [character, setCharacter] = useState<CharacterResponseData>();
   const [notes, setNotes] = useState<NotesResponseData>();
+  const provider = useParticleProvider();
+
+  /**
+   * Functions
+   */
+
+  const callViem = async () => {
+    if (!provider) return;
+    const objectProvider = Object.create(provider);
+    const ethersProvider = new ethers.providers.Web3Provider(
+      objectProvider,
+      "any"
+    );
+    const accounts = await ethersProvider.listAccounts();
+    const ethersSigner = ethersProvider.getSigner();
+
+    const tradingHubAddress = "0x6f32612bb7A8a00bc93Ba632cbB41892653D1059";
+    const abi = [
+      {
+        inputs: [],
+        name: "getOpenPositions",
+        outputs: [
+          {
+            internalType: "address[]",
+            name: "_openPositions",
+            type: "address[]",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+    ];
+
+    const contract = new ethers.Contract(tradingHubAddress, abi, ethersProvider);
+    try {
+      const openPositions = await contract.getOpenPositions();
+      console.log(openPositions);
+    } catch (error) {
+      console.log(error);
+    }
+    
+  };
+
+  /**
+   *
+   * Hooks
+   */
 
   const fetchCharacterData = async (account: string) => {
     const params = new URLSearchParams({
@@ -92,6 +144,9 @@ export default function Home() {
       </h1>
       <div className="flex h-48 w-full p-16">
         <ConnectButton />
+      </div>
+      <div>
+        <button onClick={callViem}>Call Viem</button>
       </div>
     </main>
   );
