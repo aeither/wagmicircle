@@ -30,7 +30,7 @@ interface Character {
   };
 }
 
-interface ResponseData {
+export interface CharacterResponseData {
   list: Character[];
   count: number;
   cursor: string | null;
@@ -38,7 +38,7 @@ interface ResponseData {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseData | { error: string }>
+  res: NextApiResponse<CharacterResponseData | { error: string }>
 ) {
   const { address } = req.query;
 
@@ -52,7 +52,7 @@ export default async function handler(
   );
 
   try {
-    const data = (await response.json()) as ResponseData;
+    const data = (await response.json()) as CharacterResponseData;
     res.status(200).json(data);
   } catch (error) {
     console.error(error);

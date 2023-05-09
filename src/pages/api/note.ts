@@ -44,7 +44,7 @@ interface Note {
   };
 }
 
-interface Link {
+export interface NotesLink {
   linklistId: number;
   linkType: string;
   linkItemType: string;
@@ -66,15 +66,15 @@ interface Link {
   toNote: Note;
 }
 
-interface ResponseData {
-  list: Link[];
+export interface NotesResponseData {
+  list: NotesLink[];
   count: number;
   cursor: string | null;
 }
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseData | { error: string }>
+  res: NextApiResponse<NotesResponseData | { error: string }>
 ) {
   const { characterId } = req.query;
 
@@ -88,7 +88,7 @@ export default async function handler(
   );
 
   try {
-    const data = (await response.json()) as ResponseData;
+    const data = (await response.json()) as NotesResponseData;
     res.status(200).json(data);
   } catch (error) {
     console.error(error);
