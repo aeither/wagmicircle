@@ -14,6 +14,9 @@ import useStore from "~/lib/store";
 import { CharacterResponseData } from "./api/character";
 import { Transaction } from "./api/nodereal/transaction";
 import { NotesLink, NotesResponseData } from "./api/note";
+import ReactMarkdown from "react-markdown";
+import ReactHtmlParser from "react-html-parser";
+import { AchievementsResponseData } from "./api/achievements";
 
 const Header = ({ username }: { username: string }) => {
   return (
@@ -78,6 +81,7 @@ const Sidebar = () => {
 };
 
 function LinkItem({ link }: { link: NotesLink }) {
+  console.log("🚀 ~ file: index.tsx:81 ~ LinkItem ~ link:", link);
   return (
     <li className="flex items-center space-x-4 rounded-lg border-2 border-[#F5F5F5] p-2">
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
@@ -95,20 +99,21 @@ function LinkItem({ link }: { link: NotesLink }) {
           />
         </svg>
       </div>
-      <div className="flex-1">
-        <h3 className="text-lg font-bold">Card Title</h3>
-        <div className="text-gray-700">
-          <p>Link Type: {link.linkType}</p>
-          <p>Note ID: {link.toNoteId}</p>
-          <p>Character ID: {link.toCharacterId}</p>
-          <p>Operator: {link.operator}</p>
-          <p>Created At: {link.createdAt}</p>
-          <p>Updated At: {link.updatedAt}</p>
-          <p>Transaction Hash: {link.transactionHash}</p>
-          <p>Block Number: {link.blockNumber}</p>
-          <p>Log Index: {link.logIndex}</p>
-          <p>Link Value: {link.linkValue}</p>
-        </div>
+      <div className="flex-1 gap-2">
+        {link.toNote && (
+          <>
+            <div className="inline-flex items-center rounded-full bg-gray-800 px-2.5 py-0.5 text-xs font-medium text-white">
+              <p>{link.toNote.metadata.content.sources.join(", ")}</p>
+            </div>
+            <p>Published: {link.toNote.metadata.content.date_published}</p>
+         
+            {ReactHtmlParser(link.toNote.metadata.content.content)}
+            <p>
+              External URLs:{" "}
+              {link.toNote.metadata.content.external_urls.join(", ")}
+            </p>
+          </>
+        )}
         <div className="mt-2 flex items-center space-x-2">
           <button className="flex items-center space-x-2 text-gray-600">
             <svg
@@ -230,7 +235,21 @@ const Transactions = () => {
   );
 };
 
-const Feed = ({ noteLinks }: { noteLinks: NotesLink[] }) => {
+const Feed = ({
+  noteLinks,
+  character,
+  achievements,
+}: {
+  noteLinks: NotesLink[];
+  character: CharacterResponseData | undefined;
+  achievements: AchievementsResponseData | undefined;
+}) => {
+  const ipfsUrl = character
+    ? character.list[0]?.metadata.content.avatars[0]
+    : undefined;
+  const hash = ipfsUrl ? ipfsUrl.replace("ipfs://", "") : "";
+  const gatewayUrl = `https://gateway.ipfscdn.io/ipfs/${hash}`;
+
   return (
     <main className="ml-96 mt-20 flex h-screen w-full flex-row rounded-lg bg-white p-4">
       <div className="grid w-full grid-cols-3 gap-4">
@@ -245,33 +264,39 @@ const Feed = ({ noteLinks }: { noteLinks: NotesLink[] }) => {
           </ul>
         </div>
         <div className="col-span-1">
-          <div className="mb-4 rounded-lg border-4 border-yellow-400 bg-gradient-to-tr from-yellow-200 to-yellow-400 p-4">
-            <h2 className="mb-2 text-lg font-bold">User Info</h2>
-            <p className="mb-2 text-gray-700">
-              <span className="font-bold">Balance:</span> $1,234.56
-            </p>
-            <p className="text-gray-700">
-              <span className="font-bold">Current Network:</span> Mainnet
-            </p>
+          <div className="mb-4 flex items-center justify-center rounded-lg border-4 border-yellow-400 bg-gradient-to-tr from-yellow-200 to-yellow-400 p-4">
+            <div className="text-center">
+              <h2 className="mb-2 text-lg font-bold">User Info</h2>
+              <div className="m-auto h-20 w-20">
+                <img src={gatewayUrl} alt="" />
+              </div>
+              {character && (
+                <>
+                  <p className="text-gray-700">{character.list[0]?.handle}</p>
+                  <p>{character.list[0]?.metadata.content.bio}</p>
+                  <p>{character.list[0]?.metadata.content.name}</p>
+                </>
+              )}
+            </div>
           </div>
 
           <div className="col-span-1 rounded-lg p-4">
-            <h2 className="mb-4 text-2xl font-bold">Transactions</h2>
+            <h2 className="mb-4 text-2xl font-bold">Achievements</h2>
             <div className="space-y-4">
-              <div className="rounded-lg bg-black p-4 text-white">
-                <h3 className="text-lg font-bold">Transaction Title</h3>
-                <p className="text-gray-400">
-                  Transaction description goes here.
-                </p>
-                <p className="text-gray-400">Amount: $1,234.56</p>
-              </div>
-              <div className="rounded-lg bg-black p-4 text-white">
-                <h3 className="text-lg font-bold">Transaction Title</h3>
-                <p className="text-gray-400">
-                  Transaction description goes here.
-                </p>
-                <p className="text-gray-400">Amount: $1,234.56</p>
-              </div>
+              {achievements &&
+                achievements.list.map((achievement) => (
+                  <>
+                    <div className="rounded-lg bg-black p-4 text-white">
+                      <h3 className="text-lg font-bold">
+                        {achievement.info.title}
+                      </h3>
+                      <p className="text-gray-400">
+                        {achievement.groups[0]!.items[0]!.info.description}
+                      </p>
+                    </div>
+                  </>
+                ))}
+
               {/* Add more transactions here */}
             </div>
           </div>
@@ -378,6 +403,7 @@ const Home: NextPage = () => {
   const account = useAccount();
   const [character, setCharacter] = useState<CharacterResponseData>();
   const [notes, setNotes] = useState<NotesResponseData>();
+  const [achievements, setAchievements] = useState<AchievementsResponseData>();
 
   const { setItem, item } = useStore();
 
@@ -418,6 +444,23 @@ const Home: NextPage = () => {
     }
   }, [character]);
 
+  const fetcAchievementsData = async (characterId: string) => {
+    const params = new URLSearchParams({
+      characterId: characterId,
+    });
+    const response = await fetch(`/api/achievements?${params.toString()}`);
+    const data = await response.json();
+
+    setAchievements(data);
+  };
+  useEffect(() => {
+    if (character && character.list.length > 0) {
+      const characterId = character.list[0]?.characterId || "10";
+
+      fetcAchievementsData(String(characterId));
+    }
+  }, [character]);
+
   return (
     <>
       <Head>
@@ -440,7 +483,13 @@ const Home: NextPage = () => {
         <Header username="John Doe" />
         <div className="flex w-full">
           <Sidebar />
-          {item === "overview" && notes && <Feed noteLinks={notes.list} />}
+          {item === "overview" && notes && (
+            <Feed
+              noteLinks={notes.list}
+              character={character}
+              achievements={achievements}
+            />
+          )}
           {item === "transactions" && <Transactions />}
           {item === "news" && <News />}
         </div>

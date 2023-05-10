@@ -50,13 +50,13 @@ interface Achievement {
   groups: AchievementGroup[];
 }
 
-interface ResponseData {
+export interface AchievementsResponseData {
   list: Achievement[];
 }
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseData | { error: string }>
+  res: NextApiResponse<AchievementsResponseData | { error: string }>
 ) {
   const { characterId } = req.query;
 
@@ -70,7 +70,7 @@ export default async function handler(
   );
 
   try {
-    const data = (await response.json()) as ResponseData;
+    const data = (await response.json()) as AchievementsResponseData;
     res.status(200).json(data);
   } catch (error) {
     console.error(error);
