@@ -1,23 +1,34 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-
+import {
+  ConnectButton,
+  useAccount,
+  useParticleProvider,
+} from "@particle-network/connect-react-ui";
+import { ethers } from "ethers";
+import { useEffect, useState } from "react";
+import { CharacterResponseData } from "./api/character";
+import { NotesLink, NotesResponseData } from "./api/note";
+import { AxelarAbi } from "~/utils/abi/AxelarABI";
 import Image from "next/image";
 
 const Header = ({ username }: { username: string }) => {
   return (
     <header className="fixed left-0 right-0 top-0 z-10 flex items-center justify-between bg-black px-4 py-4 text-white">
       <div className="flex items-center">
-        <Image src="/logo.png" alt="Logo" width={40} height={40} />
-        <h1 className="ml-2 font-bold">Brand Name</h1>
+        <Image
+          src="/wagmicircle_logo_transparent.png"
+          alt="Logo"
+          width={40}
+          height={40}
+        />
+        <h1 className="ml-2 font-bold">Wagmi Circle</h1>
       </div>
       <div className="flex items-center">
-        <p className="mr-4">Good morning, {username}</p>
-        <img
-          src="/profile-icon.png"
-          alt="Profile Icon"
-          className="h-8 w-8 rounded-full"
-        />
+        {/* <p className="mr-4">Good morning, {username}</p> */}
+        <p className="mr-4">Good morning</p>
+        <ConnectButton />
       </div>
     </header>
   );
@@ -41,69 +52,89 @@ const Sidebar = () => {
   );
 };
 
-const Feed = () => {
+function LinkItem({ link }: { link: NotesLink }) {
+  return (
+    <li className="flex items-center space-x-4 rounded-lg border-2 border-[#F5F5F5] p-2">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
+        <svg
+          className="h-6 w-6 text-gray-600"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          />
+        </svg>
+      </div>
+      <div className="flex-1">
+        <h3 className="text-lg font-bold">Card Title</h3>
+        <div className="text-gray-700">
+          <p>Link Type: {link.linkType}</p>
+          <p>Note ID: {link.toNoteId}</p>
+          <p>Character ID: {link.toCharacterId}</p>
+          <p>Operator: {link.operator}</p>
+          <p>Created At: {link.createdAt}</p>
+          <p>Updated At: {link.updatedAt}</p>
+          <p>Transaction Hash: {link.transactionHash}</p>
+          <p>Block Number: {link.blockNumber}</p>
+          <p>Log Index: {link.logIndex}</p>
+          <p>Link Value: {link.linkValue}</p>
+        </div>
+        <div className="mt-2 flex items-center space-x-2">
+          <button className="flex items-center space-x-2 text-gray-600">
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 8h16M4 16h16"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+              />
+            </svg>
+            <span>Like</span>
+          </button>
+          <button className="flex items-center space-x-2 text-gray-600">
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 18L18 6M6 6l12 12"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+              />
+            </svg>
+            <span>Comment</span>
+          </button>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+const Feed = ({ noteLinks }: { noteLinks: NotesLink[] }) => {
   return (
     <main className="ml-96 mt-20 flex h-screen w-full flex-row rounded-lg bg-white p-4">
       <div className="grid w-full grid-cols-3 gap-4">
         <div className="col-span-2 rounded-lg p-4">
           <h2 className="mb-4 text-2xl font-bold">Feed</h2>
           <ul className="space-y-4">
-            <li className="flex items-center space-x-4 rounded-lg border-2 border-[#F5F5F5] p-2">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
-                <svg
-                  className="h-6 w-6 text-gray-600"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                  />
-                </svg>
+            {noteLinks.map((link) => (
+              <div key={link.linklistId}>
+                <LinkItem link={link} />
               </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-bold">Card Title</h3>
-                <p className="text-gray-700">Card description goes here.</p>
-                <div className="mt-2 flex items-center space-x-2">
-                  <button className="flex items-center space-x-2 text-gray-600">
-                    <svg
-                      className="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M4 8h16M4 16h16"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                    <span>Like</span>
-                  </button>
-                  <button className="flex items-center space-x-2 text-gray-600">
-                    <svg
-                      className="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 18L18 6M6 6l12 12"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                    <span>Comment</span>
-                  </button>
-                </div>
-              </div>
-            </li>
-            {/* Add more cards here */}
+            ))}
           </ul>
         </div>
         <div className="col-span-1">
@@ -144,6 +175,51 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
+  const account = useAccount();
+  const [character, setCharacter] = useState<CharacterResponseData>();
+  const [notes, setNotes] = useState<NotesResponseData>();
+  const provider = useParticleProvider();
+
+  /**
+   *
+   * Hooks
+   */
+
+  const fetchCharacterData = async (account: string) => {
+    const params = new URLSearchParams({
+      address: account,
+    });
+    const response = await fetch(`/api/character?${params.toString()}`);
+    const data = await response.json();
+
+    setCharacter(data);
+
+    console.log("🚀 ~ file: social.tsx:9 ~ character:", data);
+  };
+  useEffect(() => {
+    if (account) {
+      fetchCharacterData(account);
+    }
+  }, [account]);
+
+  const fetchNotesData = async (characterId: string) => {
+    const params = new URLSearchParams({
+      characterId: characterId,
+    });
+    const response = await fetch(`/api/note?${params.toString()}`);
+    const data = await response.json();
+
+    setNotes(data);
+    console.log("🚀 ~ file: connect.tsx:39 ~ fetchNotesData ~ data:", data);
+  };
+  useEffect(() => {
+    if (character && character.list.length > 0) {
+      const characterId = character.list[0]?.characterId || "10";
+
+      fetchNotesData(String(characterId));
+    }
+  }, [character]);
+
   return (
     <>
       <Head>
@@ -166,7 +242,7 @@ const Home: NextPage = () => {
         <Header username="John Doe" />
         <div className="flex w-full">
           <Sidebar />
-          <Feed />
+          {notes && <Feed noteLinks={notes.list} />}
         </div>
       </main>
     </>

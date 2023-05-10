@@ -11,18 +11,72 @@ import { AxelarAbi } from "~/utils/abi/AxelarABI";
 
 function LinkItem({ link }: { link: NotesLink }) {
   return (
-    <div>
-      <p>Link Type: {link.linkType}</p>
-      <p>Note ID: {link.toNoteId}</p>
-      <p>Character ID: {link.toCharacterId}</p>
-      <p>Operator: {link.operator}</p>
-      <p>Created At: {link.createdAt}</p>
-      <p>Updated At: {link.updatedAt}</p>
-      <p>Transaction Hash: {link.transactionHash}</p>
-      <p>Block Number: {link.blockNumber}</p>
-      <p>Log Index: {link.logIndex}</p>
-      <p>Link Value: {link.linkValue}</p>
-    </div>
+    <li className="flex items-center space-x-4 rounded-lg border-2 border-[#F5F5F5] p-2">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
+        <svg
+          className="h-6 w-6 text-gray-600"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          />
+        </svg>
+      </div>
+      <div className="flex-1">
+        <h3 className="text-lg font-bold">Card Title</h3>
+        <div className="text-gray-700">
+          <p>Link Type: {link.linkType}</p>
+          <p>Note ID: {link.toNoteId}</p>
+          <p>Character ID: {link.toCharacterId}</p>
+          <p>Operator: {link.operator}</p>
+          <p>Created At: {link.createdAt}</p>
+          <p>Updated At: {link.updatedAt}</p>
+          <p>Transaction Hash: {link.transactionHash}</p>
+          <p>Block Number: {link.blockNumber}</p>
+          <p>Log Index: {link.logIndex}</p>
+          <p>Link Value: {link.linkValue}</p>
+        </div>
+        <div className="mt-2 flex items-center space-x-2">
+          <button className="flex items-center space-x-2 text-gray-600">
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 8h16M4 16h16"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+              />
+            </svg>
+            <span>Like</span>
+          </button>
+          <button className="flex items-center space-x-2 text-gray-600">
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 18L18 6M6 6l12 12"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+              />
+            </svg>
+            <span>Comment</span>
+          </button>
+        </div>
+      </div>
+    </li>
   );
 }
 
