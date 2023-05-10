@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { CharacterResponseData } from "./api/character";
 import { NotesLink, NotesResponseData } from "./api/note";
+import { AxelarAbi } from "~/utils/abi/AxelarABI";
 
 function LinkItem({ link }: { link: NotesLink }) {
   return (
@@ -58,31 +59,32 @@ export default function Home() {
     const accounts = await ethersProvider.listAccounts();
     const ethersSigner = ethersProvider.getSigner();
 
-    const tradingHubAddress = "0x6f32612bb7A8a00bc93Ba632cbB41892653D1059";
-    const abi = [
-      {
-        inputs: [],
-        name: "getOpenPositions",
-        outputs: [
-          {
-            internalType: "address[]",
-            name: "_openPositions",
-            type: "address[]",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-    ];
+    const axelarAddress = "0xFA1220C4dbFF989eDF08170d36593dBe7b2CAB59";
 
-    const contract = new ethers.Contract(tradingHubAddress, abi, ethersProvider);
+    const contract = new ethers.Contract(
+      axelarAddress,
+      AxelarAbi,
+      ethersSigner
+    );
     try {
-      const openPositions = await contract.getOpenPositions();
+      // const destinationChain = "Polygon";
+      const destinationChain = "optimism";
+      // const destinationAddress = "0xFA1220C4dbFF989eDF08170d36593dBe7b2CAB59" // Polygon
+      const destinationAddress = "0x1A8058C0E1391953Fae699602392222657BC4EE4"; // Optimism
+      const payload = ethers.utils.defaultAbiCoder.encode(
+        ["string"],
+        ["Hello from contract A"]
+      );
+
+      const openPositions = await contract.setRemoteValue(
+        destinationChain,
+        destinationAddress,
+        payload
+      );
       console.log(openPositions);
     } catch (error) {
       console.log(error);
     }
-    
   };
 
   /**
