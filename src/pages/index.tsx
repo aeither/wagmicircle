@@ -1,22 +1,21 @@
 import {
   ConnectButton,
   useAccount,
-  useParticleProvider,
   useNetwork,
+  useParticleProvider,
 } from "@particle-network/connect-react-ui";
 import { ethers } from "ethers";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import ReactHtmlParser from "react-html-parser";
 import { env } from "~/env.mjs";
 import useStore from "~/lib/store";
+import { AchievementsResponseData } from "./api/achievements";
 import { CharacterResponseData } from "./api/character";
 import { Transaction } from "./api/nodereal/transaction";
 import { NotesLink, NotesResponseData } from "./api/note";
-import ReactMarkdown from "react-markdown";
-import ReactHtmlParser from "react-html-parser";
-import { AchievementsResponseData } from "./api/achievements";
 
 const Header = ({ username }: { username: string }) => {
   return (

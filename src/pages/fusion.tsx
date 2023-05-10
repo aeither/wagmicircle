@@ -13,6 +13,46 @@ import Head from "next/head";
 const Home: NextPage = () => {
   const particleProvider = useParticleProvider();
 
+  const callAxelar = async () => {
+    const callViem = async () => {
+      if (!provider) return;
+      const objectProvider = Object.create(provider);
+      const ethersProvider = new ethers.providers.Web3Provider(
+        objectProvider,
+        "any"
+      );
+      const accounts = await ethersProvider.listAccounts();
+      const ethersSigner = ethersProvider.getSigner();
+
+      const axelarAddress = "0xFA1220C4dbFF989eDF08170d36593dBe7b2CAB59";
+
+      const contract = new ethers.Contract(
+        axelarAddress,
+        AxelarAbi,
+        ethersSigner
+      );
+      try {
+        // const destinationChain = "Polygon";
+        const destinationChain = "optimism";
+        // const destinationAddress = "0xFA1220C4dbFF989eDF08170d36593dBe7b2CAB59" // Polygon
+        const destinationAddress = "0x1A8058C0E1391953Fae699602392222657BC4EE4"; // Optimism
+        const payload = ethers.utils.defaultAbiCoder.encode(
+          ["string"],
+          ["Hello from contract A"]
+        );
+
+        const openPositions = await contract.setRemoteValue(
+          destinationChain,
+          destinationAddress,
+          payload
+        );
+        console.log(openPositions);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  };
+
   const handle = async () => {
     const sdk = new FusionSDK({
       url: "https://fusion.1inch.io",
