@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { env } from "~/env.mjs";
 
-interface Transaction {
+export interface Transaction {
   chain: string;
   blockHash: string;
   blockNumber: string;
@@ -28,6 +28,7 @@ interface GetTransactionByHashResponse {
 
 const BSC_TESTNET_URL = `https://bsc-testnet.nodereal.io/v1/${env.NODEREAL_API_KEY}`;
 const ETH_GOERLI_URL = `https://eth-goerli.nodereal.io/v1/${env.NODEREAL_API_KEY}`;
+const ETH_MAINNET_URL = `https://eth-mainnet.nodereal.io/v1/${env.NODEREAL_API_KEY}`;
 
 export default async function handler(
   req: NextApiRequest,
@@ -68,13 +69,16 @@ export default async function handler(
   };
 
   try {
-    const [bscResponse, ethResponse] = await Promise.all([
+    const [bscResponse, goerliResponse, ethResponse] = await Promise.all([
       fetch(BSC_TESTNET_URL, bscOptions),
       fetch(ETH_GOERLI_URL, ethOptions),
+      fetch(ETH_MAINNET_URL, ethOptions),
     ]);
 
     const bscResult =
       (await bscResponse.json()) as GetTransactionByHashResponse;
+    const goerliResult =
+      (await goerliResponse.json()) as GetTransactionByHashResponse;
     const ethResult =
       (await ethResponse.json()) as GetTransactionByHashResponse;
 
@@ -84,6 +88,13 @@ export default async function handler(
       transactions.push({
         ...bscResult.result,
         chain: "bsc",
+      });
+    }
+
+    if (goerliResult.result !== null) {
+      transactions.push({
+        ...goerliResult.result,
+        chain: "goerli",
       });
     }
 

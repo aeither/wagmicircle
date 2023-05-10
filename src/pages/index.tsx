@@ -1,19 +1,19 @@
-import { type NextPage } from "next";
-import Head from "next/head";
-import Link from "next/link";
 import {
   ConnectButton,
   useAccount,
   useParticleProvider,
+  useNetwork,
 } from "@particle-network/connect-react-ui";
 import { ethers } from "ethers";
-import { useEffect, useState } from "react";
-import { CharacterResponseData } from "./api/character";
-import { NotesLink, NotesResponseData } from "./api/note";
-import { AxelarAbi } from "~/utils/abi/AxelarABI";
+import { type NextPage } from "next";
+import Head from "next/head";
 import Image from "next/image";
-import useStore from "~/lib/store";
+import { useEffect, useState } from "react";
 import { env } from "~/env.mjs";
+import useStore from "~/lib/store";
+import { CharacterResponseData } from "./api/character";
+import { Transaction } from "./api/nodereal/transaction";
+import { NotesLink, NotesResponseData } from "./api/note";
 
 const Header = ({ username }: { username: string }) => {
   return (
@@ -62,7 +62,7 @@ const Sidebar = () => {
           }`}
           onClick={() => setItem("transactions")}
         >
-          Transactions
+          History
         </li>
         <li
           className={`cursor-pointer rounded-lg px-4 py-2 text-lg transition duration-200 ease-in-out ${
@@ -147,6 +147,88 @@ function LinkItem({ link }: { link: NotesLink }) {
     </li>
   );
 }
+
+const Transactions = () => {
+  const account = useAccount();
+  const provider = useParticleProvider();
+  const { chain } = useNetwork();
+
+  const [txs, setTxs] = useState<Transaction[]>([]);
+
+  useEffect(() => {
+    const fetchTxs = async () => {
+      if (!provider || !account) return;
+      // const objectProvider = Object.create(provider);
+      // const ethersProvider = new ethers.providers.Web3Provider(
+      //   objectProvider,
+      //   "any"
+      // );
+      // let etherscanProvider = new ethers.providers.EtherscanProvider(
+      //   chain ? chain.id : 1
+      // );
+      let etherscanProvider = new ethers.providers.EtherscanProvider();
+
+      // Get the transaction history for the account
+      const history = await etherscanProvider.getHistory(account);
+
+      // Fetch the transaction details for each transaction
+      const txPromises = history.map(async (tx) => {
+        const response = await fetch(
+          `api/nodereal/transaction?hash=${tx.hash}`
+        );
+        const data = await response.json();
+        return data;
+      });
+
+      // Wait for all fetch requests to complete and update the state
+      Promise.all(txPromises).then((txs) => {
+        setTxs(txs[0]);
+
+        console.log("🚀 ~ file: index.tsx:188 ~ Promise.all ~ txs:", txs);
+      });
+    };
+
+    fetchTxs();
+  }, [account, provider]);
+
+  return (
+    <main className="ml-96 mt-20 flex h-screen w-full flex-col rounded-lg bg-white p-4">
+      <h2 className="mb-4 text-2xl font-bold">Account History</h2>
+      <ul className="space-y-4">
+        {txs.map((tx, index) => (
+          <div className="flex rounded-lg border bg-white p-4 shadow-md">
+            <div className="w-1/2 pr-4">
+              <p className="text-lg">
+                <strong>Hash:</strong> {tx.hash}
+              </p>
+              <p className="text-lg">
+                <strong>Block Number:</strong> {tx.blockNumber}
+              </p>
+              <p className="text-lg">
+                <strong>From:</strong> {tx.from}
+              </p>
+              <p className="text-lg">
+                <strong>To:</strong> {tx.to}
+              </p>
+              <p className="text-lg">
+                <strong>Value:</strong> {tx.value}
+              </p>
+              <p className="text-lg">
+                <strong>Gas:</strong> {tx.gas}
+              </p>
+              <p className="text-lg">
+                <strong>Gas Price:</strong> {tx.gasPrice}
+              </p>
+              <p className="text-lg">
+                <strong>Nonce:</strong> {tx.nonce}
+              </p>
+            </div>
+          </div>
+        ))}
+      </ul>
+    </main>
+  );
+};
 
 const Feed = ({ noteLinks }: { noteLinks: NotesLink[] }) => {
   return (
@@ -296,7 +378,7 @@ const Home: NextPage = () => {
   const account = useAccount();
   const [character, setCharacter] = useState<CharacterResponseData>();
   const [notes, setNotes] = useState<NotesResponseData>();
-  const provider = useParticleProvider();
+
   const { setItem, item } = useStore();
 
   /**
@@ -312,8 +394,6 @@ const Home: NextPage = () => {
     const data = await response.json();
 
     setCharacter(data);
-
-    console.log("🚀 ~ file: social.tsx:9 ~ character:", data);
   };
   useEffect(() => {
     if (account) {
@@ -329,7 +409,6 @@ const Home: NextPage = () => {
     const data = await response.json();
 
     setNotes(data);
-    console.log("🚀 ~ file: connect.tsx:39 ~ fetchNotesData ~ data:", data);
   };
   useEffect(() => {
     if (character && character.list.length > 0) {
@@ -362,6 +441,7 @@ const Home: NextPage = () => {
         <div className="flex w-full">
           <Sidebar />
           {item === "overview" && notes && <Feed noteLinks={notes.list} />}
+          {item === "transactions" && <Transactions />}
           {item === "news" && <News />}
         </div>
       </main>
