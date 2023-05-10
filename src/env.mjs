@@ -21,6 +21,7 @@ export const env = createEnv({
     NEXT_PUBLIC_PROJECT_ID: z.string(),
     NEXT_PUBLIC_CLIENT_KEY: z.string(),
     NEXT_PUBLIC_APP_ID: z.string(),
+    NEXT_PUBLIC_NEWSDATA_KEY: z.string(),
   },
 
   /**
@@ -33,6 +34,7 @@ export const env = createEnv({
     NEXT_PUBLIC_PROJECT_ID: process.env.NEXT_PUBLIC_PROJECT_ID,
     NEXT_PUBLIC_CLIENT_KEY: process.env.NEXT_PUBLIC_CLIENT_KEY,
     NEXT_PUBLIC_APP_ID: process.env.NEXT_PUBLIC_APP_ID,
+    NEXT_PUBLIC_NEWSDATA_KEY: process.env.NEXT_PUBLIC_NEWSDATA_KEY,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
 });
