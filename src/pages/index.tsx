@@ -44,7 +44,7 @@ const Sidebar = () => {
   console.log("🚀 ~ file: index.tsx:40 ~ Sidebar ~ item:", item);
 
   return (
-    <nav className="fixed left-0 top-0 flex h-full w-1/4 flex-col justify-center bg-[#F5F5F5] py-4">
+    <nav className="fixed left-0 top-0 flex h-full w-1/5 flex-col justify-center bg-[#F5F5F5] py-4">
       <ul className="space-y-2 p-2">
         <li
           className={`cursor-pointer rounded-lg px-4 py-2 text-lg transition duration-200 ease-in-out ${
@@ -106,7 +106,7 @@ function LinkItem({ link }: { link: NotesLink }) {
               <p>{link.toNote.metadata.content.sources.join(", ")}</p>
             </div>
             <p>Published: {link.toNote.metadata.content.date_published}</p>
-         
+
             {ReactHtmlParser(link.toNote.metadata.content.content)}
             <p>
               External URLs:{" "}
@@ -203,6 +203,9 @@ const Transactions = () => {
         {txs.map((tx, index) => (
           <div className="flex rounded-lg border bg-white p-4 shadow-md">
             <div className="w-1/2 pr-4">
+              <div className="inline-flex items-center rounded-full bg-yellow-400 px-2.5 py-0.5 text-lg font-medium text-gray-900">
+                <strong>Chain:</strong> {tx.chain}
+              </div>
               <p className="text-lg">
                 <strong>Hash:</strong> {tx.hash}
               </p>
@@ -251,7 +254,7 @@ const Feed = ({
   const gatewayUrl = `https://gateway.ipfscdn.io/ipfs/${hash}`;
 
   return (
-    <main className="ml-96 mt-20 flex h-screen w-full flex-row rounded-lg bg-white p-4">
+    <main className="ml-80 mt-20 flex h-screen w-full flex-row rounded-lg bg-white p-4">
       <div className="grid w-full grid-cols-3 gap-4">
         <div className="col-span-2 rounded-lg p-4">
           <h2 className="mb-4 text-2xl font-bold">Feed</h2>
@@ -297,7 +300,7 @@ const Feed = ({
                   </>
                 ))}
 
-              {/* Add more transactions here */}
+              <SendTransactionForm />
             </div>
           </div>
         </div>
@@ -396,6 +399,72 @@ const News = () => {
         )}
       </div>
     </main>
+  );
+};
+
+const SendTransactionForm = () => {
+  const [toAddress, setToAddress] = useState("");
+  const [amount, setAmount] = useState("");
+  const provider = useParticleProvider();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // Convert the amount to wei
+    const amountInWei = ethers.utils.parseEther(amount);
+
+    // Get the signer for the current provider
+    if (!provider) return;
+    const objectProvider = Object.create(provider);
+    const ethersProvider = new ethers.providers.Web3Provider(
+      objectProvider,
+      "any"
+    );
+    const ethersSigner = ethersProvider.getSigner();
+
+    // Send the transaction
+    const tx = await ethersSigner.sendTransaction({
+      to: toAddress,
+      value: amountInWei,
+    });
+
+    console.log("Transaction sent:", tx);
+  };
+
+  return (
+    <div className="rounded-lg bg-yellow-400 p-4 text-black">
+      <h3 className="text-lg font-bold">Send Transaction</h3>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-black">
+            To address:
+            <input
+              type="text"
+              value={toAddress}
+              onChange={(event) => setToAddress(event.target.value)}
+              className="form-input mt-1 block w-full rounded p-2"
+            />
+          </label>
+        </div>
+        <div className="mb-4">
+          <label className="block text-black">
+            Amount (ETH):
+            <input
+              type="text"
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              className="form-input mt-1 block w-full rounded p-2"
+            />
+          </label>
+        </div>
+        <button
+          type="submit"
+          className="rounded bg-black px-4 py-2 font-bold text-white hover:bg-gray-700"
+        >
+          Send
+        </button>
+      </form>
+    </div>
   );
 };
 
