@@ -22,6 +22,18 @@ Website: https://wagmicircle.vercel.app/
 
 Wagmi Circle is a socialfi platform that allows users to discover and share knowledge, send and receive tips, and access cross-chain transaction history. With Wagmi Circle, users can connect with like-minded individuals, learn from a community of experts, and earn rewards for their contributions.
 
+## Problem
+
+1.	Lack of a social platform for sharing knowledge and learning from others in the crypto community.
+2.	Limited options for earning rewards for contributions to the community.
+3.	Difficulty in accessing cross-chain transaction history in a centralized and user-friendly manner.
+
+## Solution:
+
+1.	A social platform that allows users to acquire knowledge, read news, and access 
+2.	Easily check cross-chain transaction history.
+4.	A social onboarding wallet that allow sign up with Web2 experience.
+
 ## Tech Stack
 
 - Particle Network, CrossBell, NodeReal, Typescript, Nextjs, TailwindCSS
