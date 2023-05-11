@@ -74,6 +74,53 @@ Wagmi Circle is a socialfi platform that allows users to discover and share know
     }
 ```
 
+### Multichain social login
+
+```tsx
+    <ModalProvider
+      walletSort={["Particle Auth", "Wallet"]}
+      particleAuthSort={[
+        "email",
+        "phone",
+        "google",
+        "apple",
+        "facebook",
+        "microsoft",
+        "linkedin",
+        "github",
+        "discord",
+      ]}
+      options={{
+        projectId: env.NEXT_PUBLIC_PROJECT_ID,
+        clientKey: env.NEXT_PUBLIC_CLIENT_KEY,
+        appId: env.NEXT_PUBLIC_APP_ID,
+        chains: [
+          BSC,
+          BSCTestnet,
+          Ethereum,
+          EthereumGoerli,
+          OptimismGoerli,
+          PolygonMumbai,
+          Optimism,
+          Moonbeam,
+          Moonriver,
+          Avalanche,
+          Polygon,
+        ],
+        particleWalletEntry: {
+          displayWalletEntry: true,
+          defaultWalletEntryPosition: WalletEntryPosition.BR,
+          supportChains: [Ethereum, EthereumGoerli],
+        },
+        wallets: [...evmWallets({ qrcode: false })],
+      }}
+      language="en"
+      theme={"light"}
+    >
+      <Component {...pageProps} />
+    </ModalProvider>
+```
+
 ## Tech Stack
 
 - Particle Network, CrossBell, NodeReal, Typescript, Nextjs, TailwindCSS
