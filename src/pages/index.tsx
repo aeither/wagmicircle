@@ -105,6 +105,7 @@ function LinkItem({ link }: { link: NotesLink }) {
               <p>{link.toNote.metadata.content.sources.join(", ")}</p>
             </div>
             <p>Published: {link.toNote.metadata.content.date_published}</p>
+            <p>Owner: {link.toNote.owner}</p>
 
             {ReactHtmlParser(link.toNote.metadata.content.content)}
             <p>
