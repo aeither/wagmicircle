@@ -121,6 +121,37 @@ Wagmi Circle is a socialfi platform that allows users to discover and share know
     </ModalProvider>
 ```
 
+### User social data
+
+```tsx
+const response = await fetch(
+    `https://indexer.crossbell.io/v1/characters/${characterId}/achievements`,
+    {
+      headers: {
+        accept: "application/json",
+      },
+    }
+  );
+  
+  const response = await fetch(
+    `https://indexer.crossbell.io/v1/addresses/${address}/characters?primary=true`,
+    {
+      headers: {
+        accept: "application/json",
+      },
+    }
+  );
+
+  const response = await fetch(
+    `https://indexer.crossbell.io/v1/characters/${characterId}/links?limit=20`,
+    {
+      headers: {
+        accept: "application/json",
+      },
+    }
+  );
+```
+
 ## Tech Stack
 
 - Particle Network, CrossBell, NodeReal, Typescript, Nextjs, TailwindCSS
