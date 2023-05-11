@@ -1,3 +1,6 @@
+
+# 🤝 Wagmi Circle
+
 <p align="center">
   <a href="#description"><strong>Introduction</strong></a> ·
   <a href="#tech-stack"><strong>Tech Stack</strong></a>
@@ -11,9 +14,20 @@
 
 </div>
 
-# Wagmi Circle
+## DEMO
+
+Website: https://wagmicircle.vercel.app/
 
 ## Description
 
+Wagmi Circle is a socialfi platform that allows users to discover and share knowledge, send and receive tips, and access cross-chain transaction history. With Wagmi Circle, users can connect with like-minded individuals, learn from a community of experts, and earn rewards for their contributions.
 
 ## Tech Stack
+
+- Particle Network, CrossBell, NodeReal, Typescript, Nextjs, TailwindCSS
+
+## Roadmap
+•	Improve UX/UI
+•	Integration with additional blockchains for expanded cross-chain transaction history
+•	V2 Home Feed
+•	Integration with additional decentralized finance (DeFi) protocols
