@@ -34,6 +34,46 @@ Wagmi Circle is a socialfi platform that allows users to discover and share know
 2.	Easily check cross-chain transaction history.
 4.	A social onboarding wallet that allow sign up with Web2 experience.
 
+### Cross-chain transaction checker
+
+```tsx
+    const [bscResponse, goerliResponse, ethResponse] = await Promise.all([
+      fetch(BSC_TESTNET_URL, bscOptions),
+      fetch(ETH_GOERLI_URL, ethOptions),
+      fetch(ETH_MAINNET_URL, ethOptions),
+    ]);
+
+    const bscResult =
+      (await bscResponse.json()) as GetTransactionByHashResponse;
+    const goerliResult =
+      (await goerliResponse.json()) as GetTransactionByHashResponse;
+    const ethResult =
+      (await ethResponse.json()) as GetTransactionByHashResponse;
+
+    const transactions: Transaction[] = [];
+
+    if (bscResult.result !== null) {
+      transactions.push({
+        ...bscResult.result,
+        chain: "bsc",
+      });
+    }
+
+    if (goerliResult.result !== null) {
+      transactions.push({
+        ...goerliResult.result,
+        chain: "goerli",
+      });
+    }
+
+    if (ethResult.result !== null) {
+      transactions.push({
+        ...ethResult.result,
+        chain: "eth",
+      });
+    }
+```
+
 ## Tech Stack
 
 - Particle Network, CrossBell, NodeReal, Typescript, Nextjs, TailwindCSS
