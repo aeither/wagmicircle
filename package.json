@@ -15,6 +15,7 @@
     "@particle-network/provider": "^0.13.0",
     "@particle-network/solana-wallet": "^0.13.0",
     "@radix-ui/react-avatar": "^1.0.2",
+    "@solana/web3.js": "^1.76.0",
     "@t3-oss/env-nextjs": "^0.2.1",
     "@walletconnect/ethereum-provider": "^1.8.0",
     "class-variance-authority": "^0.6.0",
